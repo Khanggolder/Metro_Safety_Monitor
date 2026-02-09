@@ -15,6 +15,16 @@ from datasets import MyDataset
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+   
+    OUTPUT_DIR = r"D:\NCKH\ket_qua_option_1"        
+    MODEL_DIR = os.path.join(OUTPUT_DIR, "models")
+    FIG_DIR = os.path.join(OUTPUT_DIR, "figures")
+    LOG_DIR = os.path.join(OUTPUT_DIR, "logs")
+
+    os.makedirs(MODEL_DIR, exist_ok=True)
+    os.makedirs(FIG_DIR, exist_ok=True)
+    os.makedirs(LOG_DIR, exist_ok=True)
+
     print("suwr dung",device)
     model = torchvision.models.resnet18(pretrained = True)
     for param in model.parameters():
@@ -78,7 +88,7 @@ if __name__ == "__main__":
 
     history = {'train_loss': [], 'val_loss': [], 'val_acc': [], 'val_p': [], 'val_r': [], 'val_f1': []}
     best_acc = 0.0
-    writer = SummaryWriter()
+    writer = SummaryWriter(log_dir=LOG_DIR)
     for epoch in range(8):
         model.train()
         running_loss = 0.0
@@ -124,9 +134,9 @@ if __name__ == "__main__":
 
         if acc > best_acc:
             best_acc = acc
-            torch.save(model.state_dict(), 'best_model.pth')
+            torch.save(model.state_dict(), os.path.join(MODEL_DIR, 'best_model.pth'))
         
-        torch.save(model.state_dict(),'last_model.pth')
+        torch.save(model.state_dict(), os.path.join(MODEL_DIR, 'last_model.pth'))
 
     writer.close()
 
@@ -138,7 +148,7 @@ if __name__ == "__main__":
         plt.ylabel(label)
         plt.grid(True, linestyle='--', alpha=0.7)
         plt.legend()
-        plt.savefig(os.path.join(filename), dpi=300)
+        plt.savefig(os.path.join(FIG_DIR, filename), dpi=300)
         plt.close()
 
     save_plot(history['val_acc'], 'Accuracy (%)', 'val_accuracy.png', 'Validation Accuracy', 'blue')
@@ -154,7 +164,7 @@ if __name__ == "__main__":
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.7)
-    plt.savefig(os.path.join('loss_curves.png'), dpi=300)
+    plt.savefig(os.path.join(FIG_DIR, 'loss_curves.png'), dpi=300)
     plt.close()
 
     print(f"Đã lưu kết quả")
