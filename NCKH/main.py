@@ -15,17 +15,17 @@ torch.backends.cudnn.benchmark = True
 torch.set_float32_matmul_precision("high")
 from shapely.geometry import Polygon
 
-#streamlit run C:\Users\ad\Downloads\codepython\project\NCKH\main.py
+#streamlit run C:\Users\ad\Downloads\codepython\project\Metro_Safety_Monitor\NCKH\main.py
 
 st.set_page_config(page_title="Metro AI Monitor", layout="wide")
 st.title("Hệ thống Giám sát An toàn Metro")
 
 if "sound_init" not in st.session_state:
     pygame.mixer.init()
-    pygame.mixer.music.load(r"C:\Users\ad\Downloads\codepython\project\NCKH\alarm.mp3")
+    pygame.mixer.music.load(r"C:\Users\ad\Downloads\codepython\project\Metro_Safety_Monitor\NCKH\alarm.mp3")
     st.session_state.sound_init = True
 
-ALERT_ROOT = r"C:\Users\ad\Downloads\codepython\project\NCKH\alerts"
+ALERT_ROOT = r"C:\Users\ad\Downloads\codepython\project\Metro_Safety_Monitor\NCKH\alerts"
 os.makedirs(os.path.join(ALERT_ROOT, "falls"), exist_ok=True)
 os.makedirs(os.path.join(ALERT_ROOT, "intrusions"), exist_ok=True)
 
@@ -79,7 +79,7 @@ frame_holder = st.empty()
 
 frame_count = 0
 door_state = 0
-DISPLAY_SKIP = 5
+DISPLAY_SKIP = 3
 
 with st.sidebar:
     st.header("Cảnh báo đã lưu")

@@ -87,6 +87,8 @@ class PoseEngine:
         tids = results[0].boxes.id.int().cpu().tolist()
 
         for box, kp, tid in zip(boxes, kpts, tids):
+            person_fall = False
+            person_intrude = False
             x, y, w, h = box
 
             left_ankle = kp[15]
@@ -97,6 +99,7 @@ class PoseEngine:
                 raw_intrude = False
             intrude_n = self.update_streak(self.intrude_streak, tid, raw_intrude)
             if intrude_n >= self.N_INTRUDE:
+                person_intrude = True
                 is_intrude = True
                 if intrude_n == self.N_INTRUDE:
                     trigger_ids.append(tid)
@@ -146,21 +149,22 @@ class PoseEngine:
 
             fall_n = self.update_streak(self.fall_streak, tid, raw_falling)
             if fall_n >= self.N_FALL:
+                person_fall = True
                 is_fall = True
                 if fall_n == self.N_FALL:
                     trigger_ids.append(tid)
 
-            if is_fall:
+            if person_fall:
                 color = (0, 255, 255)
-                label = "EMERGENCY: FALL"
-            elif is_intrude:
+                label = f"ID:{tid} FALL"
+            elif person_intrude:
                 color = (0, 0, 255)
-                label = "DANGER: INTRUSION"
+                label = f"ID:{tid} INTRUDE"
             else:
                 color = (0, 255, 0)
                 label = f"ID:{tid} OK"
 
-            if is_fall or is_intrude:
+            if person_fall or person_intrude:
                 frame = self.blur_face(frame, kp)
 
             cv2.rectangle(frame,
