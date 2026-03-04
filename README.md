@@ -106,7 +106,7 @@ pip install ultralytics opencv-python torch torchvision shapely streamlit pygame
 
 | Công nghệ | Mục đích |
 |-----------|----------|
-| **YOLO Pose (v8/v11)** | Ước lượng tư thế, phát hiện ngã/pre-fall |
+| **YOLO Pose (v11/v26)** | Ước lượng tư thế, phát hiện ngã/pre-fall |
 | **ByteTrack** | Theo dõi đối tượng (tracking) |
 | **ResNet18** | Phân loại trạng thái cửa đóng/mở |
 | **Shapely** | Kiểm tra điểm trong polygon (vùng nguy hiểm) |
