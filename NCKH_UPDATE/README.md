@@ -23,7 +23,7 @@ pip install ultralytics opencv-python torch torchvision shapely streamlit pygame
 ## Cấu trúc thư mục
 
 ```
-NCKH/
+NCKH_UPDATE/
 ├── config.py                    # Cấu hình camera, polygon vùng cửa + vùng nguy hiểm
 ├── camera_manager.py            # Quản lý nguồn video
 ├── door_engine.py               # Nhận diện trạng thái cửa (ResNet18)
@@ -70,7 +70,7 @@ CAMERAS = {
 - **door_zone**: polygon vùng cửa (để nhận diện cửa đóng/mở)
 - **danger_zone**: polygon vùng nguy hiểm (để phát hiện xâm nhập)
 
-> Tọa độ polygon lấy bằng cách mở video trong một tool vẽ polygon (VD: [CVAT](https://www.cvat.ai/) hoặc một script OpenCV đơn giản), sau đó copy tọa độ các đỉnh vào config.
+> Tọa độ polygon lấy bằng cách mở video trong một tool vẽ polygon (VD: [Roboflow](https://polygonzone.roboflow.com/) hoặc một script OpenCV đơn giản), sau đó copy tọa độ các đỉnh vào config.
 
 ---
 
@@ -83,7 +83,7 @@ Mở **hai terminal** riêng biệt:
 **Terminal 1** — Khởi động hệ thống + Dashboard:
 
 ```bash
-cd C:\Users\ad\Downloads\codepython\project\NCKH
+cd C:\Users\ad\Downloads\codepython\project\NCKH_UPDATE
 streamlit run main.py
 ```
 
@@ -92,7 +92,7 @@ Dashboard sẽ mở trên trình duyệt, hiển thị tổng quan hệ thống:
 **Terminal 2** — Mở cửa sổ xem video real-time:
 
 ```bash
-cd C:\Users\ad\Downloads\codepython\project\NCKH
+cd C:\Users\ad\Downloads\codepython\project\NCKH_UPDATE
 python demo_viewer_from_engine.py
 ```
 
@@ -189,14 +189,14 @@ Dữ liệu này hiển thị trên Dashboard Streamlit ở tab **Lịch sử c�
 | Viewer hiện "Waiting for frames..." | Đảm bảo đã chạy `streamlit run main.py` trước |
 | FPS thấp (< 10) | Kiểm tra GPU CUDA đã cài đúng chưa, hoặc giảm `imgsz` |
 | Không có âm thanh | Cài `pygame`: `pip install pygame` |
-| Lỗi import module | Chạy từ đúng thư mục `NCKH/`, không chạy từ thư mục khác |
+| Lỗi import module | Chạy từ đúng thư mục `NCKH_UPDATE/`, không chạy từ thư mục khác |
 | Video kết thúc, viewer đen | Viewer engine sẽ tự reconnect; demo standalone sẽ tự loop |
 
 ---
 
 ## Ghi chú kỹ thuật
 
-- YOLO Pose model: `yolo26n-pose.pt` (YOLOv8 nano pose, tracking bằng ByteTrack)
+- YOLO Pose model: `yolo26n-pose.pt` (YOLOv26 nano pose, tracking bằng ByteTrack)
 - Door classification: ResNet18 fine-tuned trên dữ liệu cửa metro
 - Database: SQLite WAL mode, ghi non-blocking
 - Hệ thống chạy đa luồng (mỗi camera 1 thread), engine độc lập với UI
