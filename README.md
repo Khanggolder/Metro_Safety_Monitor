@@ -18,7 +18,7 @@ Metro_Safety_Monitor/
 
 ## Các thành phần
 
-### 📁 NCKH — Phiên bản gốc (v1)
+### NCKH — Phiên bản gốc (v1)
 
 Phiên bản đầu tiên của hệ thống, xử lý **một camera** tại một thời điểm thông qua giao diện **Streamlit**.
 
@@ -40,7 +40,7 @@ streamlit run main.py
 
 ---
 
-### 📁 NCKH_UPDATE — Phiên bản nâng cấp (v2)
+### NCKH_UPDATE — Phiên bản nâng cấp (v2)
 
 Phiên bản mở rộng với **xử lý đa camera song song**, chạy engine ngầm tách biệt khỏi UI.
 
@@ -67,7 +67,7 @@ python demo_viewer_from_engine.py
 
 ---
 
-### 📁 classification_door — Huấn luyện model cửa
+### classification_door — Huấn luyện model cửa
 
 Module huấn luyện model **ResNet18** để phân loại trạng thái cửa metro (đóng/mở).
 
