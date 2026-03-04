@@ -4,3 +4,5 @@ __pycache__/
 runs/
 demo.ipynb 
 EDA.ipynb
+test/
+classification_door/model/test.ipynb
