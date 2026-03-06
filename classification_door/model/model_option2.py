@@ -11,12 +11,12 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision import transforms
 from sklearn.metrics import precision_score, recall_score, f1_score
 
-from model.datasets import MyDataset
+from datasets import MyDataset
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
    
-    OUTPUT_DIR = r"D:\NCKH\ket_qua_option2"        
+    OUTPUT_DIR = r"D:\NCKH\classification_door\ket_qua_option2"        
     MODEL_DIR = os.path.join(OUTPUT_DIR, "models")
     FIG_DIR = os.path.join(OUTPUT_DIR, "figures")
     LOG_DIR = os.path.join(OUTPUT_DIR, "logs")
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 ])
 
 
-    train_ds = MyDataset(root_dir=r"D:\NCKH\data\train",transform = train_transform)
+    train_ds = MyDataset(root_dir=r"D:\NCKH\classification_door\data\train",transform = train_transform)
     train_dataloader = DataLoader(
             dataset=train_ds,
             batch_size=32,
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             drop_last= False
         )
     test_dataset = MyDataset(
-    root_dir=r"D:\NCKH\data\test",
+    root_dir=r"D:\NCKH\classification_door\data\test",
     transform=test_transform,
     class_to_idx=train_ds.class_to_idx
     )
@@ -133,9 +133,9 @@ if __name__ == "__main__":
 
         if acc > best_acc:
             best_acc = acc
-            torch.save(model.state_dict(), os.path.join(MODEL_DIR, 'best_model.pth'))
+            torch.save(model.state_dict(), os.path.join(MODEL_DIR, 'best_model_v1.pth'))
         
-        torch.save(model.state_dict(), os.path.join(MODEL_DIR, 'last_model.pth'))
+        torch.save(model.state_dict(), os.path.join(MODEL_DIR, 'last_model_v1.pth'))
 
     writer.close()
 
