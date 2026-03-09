@@ -1,5 +1,5 @@
 #config.py
-ROOT = r"C:\Users\ad\Downloads\codepython\project\NCKH"
+ROOT = r"D:\Metro_Safety_Monitor\NCKH_UPDATE"
 
 CAMERAS = {
     "Cam 1": {

@@ -176,7 +176,7 @@ class BackgroundEngine:
         self.metrics = MetricsManager()
         self.db = DBManager()
 
-        self.yolo_path = os.path.join(ROOT, "yolo26s-pose.pt")
+        self.yolo_path = os.path.join(ROOT, "yolo11n-pose.pt")
         self.resnet_path = os.path.join(ROOT, "best_model.pth")
 
     def start(self):

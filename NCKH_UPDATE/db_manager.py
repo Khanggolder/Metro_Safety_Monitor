@@ -5,7 +5,7 @@ import threading
 from datetime import datetime, timedelta
 
 DB_PATH = os.path.join(
-    r"C:\Users\ad\Downloads\codepython\project\NCKH", "metro_ai.db"
+    r"D:\Metro_Safety_Monitor\NCKH_UPDATE", "metro_ai.db"
 )
 
 

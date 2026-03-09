@@ -17,7 +17,7 @@ torch.backends.cudnn.benchmark = True
 torch.set_float32_matmul_precision('high')
 
 #Mở terminal run lệnh:
-#streamlit run C:\Users\ad\Downloads\codepython\project\NCKH\metro_safety4.py
+#streamlit run D:\Metro_Safety_Monitor\NCKH\storage\metro_safety4.py
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
@@ -28,7 +28,7 @@ door_model.fc = nn.Sequential(
     nn.Linear(num_feats, 2)
 )
 door_model.load_state_dict(torch.load(
-    r"C:\Users\ad\Downloads\codepython\project\NCKH\best_model.pth",
+    r"D:\Metro_Safety_Monitor\NCKH\best_model.pth",
     map_location=device
 ))
 
@@ -44,7 +44,8 @@ DOOR_SKIP = 10
 # door_zone_pts = [[1053, 362], [1051, 777], [1539, 1077], [1573, 1077], [1580, 479]] #back_ground_004
 # door_zone_pts = [[1074, 612], [1082, 912], [1551, 1077], [1759, 1076], [1751, 685]]#vung_cam_001
 # door_zone_pts = [[948, 599], [948, 599], [950, 864], [1496, 1076], [1582, 1076], [1582, 1076], [1579, 675]]#vung_cam_002
-door_zone_pts = [[1413, 662], [1416, 810], [1618, 930], [1622, 701]] #te_ngang_010
+#door_zone_pts = [[1413, 662], [1416, 810], [1618, 930], [1622, 701]] #te_ngang_010
+door_zone_pts = [[422, 463], [439, 715], [139, 818], [90, 474]] #te_ngang_010
 
 door_polygon = Polygon(door_zone_pts)
 
@@ -87,7 +88,7 @@ def predict_door(frame):
     return pred
 
 # --- TẠO THƯ MỤC LƯU CẢNH BÁO ---
-ALERT_ROOT = r"C:\Users\ad\Downloads\codepython\project\NCKH\alerts"
+ALERT_ROOT = r"D:\Metro_Safety_Monitor\NCKH\alerts"
 # --- GIAO DIỆN STREAMLIT ---
 st.set_page_config(page_title="Metro Monitor", layout="wide")
 st.title("Hệ thống Giám sát Metro")
@@ -133,12 +134,12 @@ setup_folders()
 
 
 pygame.mixer.init()
-pygame.mixer.music.load(r"C:\Users\ad\Downloads\codepython\project\NCKH\alarm.mp3")
+pygame.mixer.music.load(r"D:\Metro_Safety_Monitor\NCKH\alarm.mp3")
 def play_alarm():
     if not pygame.mixer.music.get_busy():
         pygame.mixer.music.play()
 
-model = YOLO(r"C:\Users\ad\Downloads\codepython\project\NCKH\yolo26n-pose.pt")
+model = YOLO(r"D:\Metro_Safety_Monitor\NCKH_UPDATE\yolo26s-pose.pt")
 
 model.to(device)
 model.fuse()
@@ -146,7 +147,8 @@ model.fuse()
 # danger_zone_pts = [[1130, 1076], [228, 289], [246, 286], [1549, 1077]] #back_ground_004
 # danger_zone_pts = [[1193, 1076], [208, 562], [208, 524], [1710, 698], [1705, 1076]] #vung_cam_001
 # danger_zone_pts = [[1246, 1076], [211, 529], [211, 508], [1711, 711], [1711, 1076]] #vung_cam_002
-danger_zone_pts = [[1673, 1076], [1008, 592], [1008, 577], [1913, 754], [1912, 1074]] #te_ngang_010
+#danger_zone_pts = [[1673, 1076], [1008, 592], [1008, 577], [1913, 754], [1912, 1074]] #te_ngang_010
+danger_zone_pts = [[123, 884], [62, 816], [994, 542], [1014, 585]]
 danger_polygon = Polygon(danger_zone_pts)
 
 prev_y_coords = {}
@@ -205,7 +207,7 @@ def blur_face(frame, kpts):
 
     return frame
 
-cap = cv2.VideoCapture("C:\\Users\\ad\\Downloads\\codepython\\project\\NCKH\\data\\te_ngang_010.mp4", cv2.CAP_FFMPEG)
+cap = cv2.VideoCapture(r"D:\Metro_Safety_Monitor\NCKH\data\ngã chong rung\v2.mp4", cv2.CAP_FFMPEG)
 frame_count = 0
 SKIP = 2
 DISPLAY_SKIP = 10

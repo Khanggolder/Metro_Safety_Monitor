@@ -8,7 +8,7 @@ from datetime import datetime
 from background_engine import get_engine
 from config import CAMERAS
 
-#streamlit run C:\Users\ad\Downloads\codepython\project\NCKH\main.py
+#streamlit run D:\Metro_Safety_Monitor\NCKH_UPDATE\main.py
 st.set_page_config(page_title="Metro AI Dashboard", layout="wide")
 
 engine = get_engine()

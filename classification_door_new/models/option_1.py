@@ -57,7 +57,7 @@ if __name__ == "__main__":
     train_ds = MyDataset(root_dir=r"D:\Metro_Safety_Monitor\classification_door_new\data\train",transform = train_transform)
     train_dataloader = DataLoader(
             dataset=train_ds,
-            batch_size=32,
+            batch_size=8,
             shuffle=True,
             num_workers=0,
             drop_last= False
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     test_dataloader = DataLoader(
         dataset=test_dataset,
-        batch_size=32,
+        batch_size=8,
         shuffle=False,
         num_workers=0,
         drop_last=False
