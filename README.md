@@ -1,3 +1,5 @@
+https://github.com/user-attachments/assets/d3ddfb3f-cdc8-46b1-80b7-c4842e6c533f
+
 # Metro Safety Monitor
 
 Hệ thống giám sát an toàn ga metro bằng AI — sử dụng camera kết hợp **YOLO Pose Estimation** và **ResNet18** để phát hiện các tình huống nguy hiểm trên sân ga theo thời gian thực: **ngã (fall)**, **xâm nhập vùng nguy hiểm (intrusion)**, và **cảnh báo sớm trước khi ngã (pre-fall)**.
