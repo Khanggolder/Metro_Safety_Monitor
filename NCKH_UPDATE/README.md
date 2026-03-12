@@ -447,26 +447,26 @@ Cửa sổ OpenCV hiển thị video real-time, **không chạy inference**:
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                  BackgroundEngine (singleton)         │
-│                                                       │
+│           BackgroundEngine (singleton)              │
+│                                                     │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐           │
-│  │ Worker 1 │  │ Worker 2 │  │ Worker 3 │  ...       │
+│  │ Worker 1 │  │ Worker 2 │  │ Worker 3 │           │
 │  │ (Thread) │  │ (Thread) │  │ (Thread) │           │
 │  │          │  │          │  │          │           │
 │  │ Camera   │  │ Camera   │  │ Camera   │           │
 │  │ YOLO     │  │ YOLO     │  │ YOLO     │           │
 │  │ ResNet   │  │ ResNet   │  │ ResNet   │           │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘           │
-│       │              │              │                 │
-│       ▼              ▼              ▼                 │
-│  ┌──────────────────────────────────────────┐        │
-│  │         MetricsManager (singleton)        │        │
-│  │  FPS, YOLO ms, ResNet ms, CPU, GPU        │        │
-│  └──────────────────────────────────────────┘        │
-│  ┌──────────────────────────────────────────┐        │
-│  │          DBManager (singleton, WAL)       │        │
-│  │  alerts table + system_stats table        │        │
-│  └──────────────────────────────────────────┘        │
+│       │             │             │                 │
+│       ▼             ▼             ▼                 │
+│  ┌──────────────────────────────────────────┐       │
+│  │         MetricsManager (singleton)       │       │
+│  │  FPS, YOLO ms, ResNet ms, CPU, GPU       │       │
+│  └──────────────────────────────────────────┘       │
+│  ┌──────────────────────────────────────────┐       │
+│  │          DBManager (singleton, WAL)      │       │
+│  │  alerts table + system_stats table       │       │
+│  └──────────────────────────────────────────┘       │
 └─────────────────────────────────────────────────────┘
           │                              │
           ▼                              ▼
