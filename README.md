@@ -8,9 +8,10 @@ Hệ thống giám sát an toàn ga metro bằng AI — sử dụng camera kết
 
 ```
 Metro_Safety_Monitor/
-├── NCKH/                    # Phiên bản gốc (v1) — Streamlit UI đơn camera
-├── NCKH_UPDATE/             # Phiên bản nâng cấp (v2) — đa camera, background engine
-├── classification_door/     # Huấn luyện model phân loại trạng thái cửa
+├── NCKH/                        # Phiên bản gốc (v1) — Streamlit UI, xử lý đơn camera
+├── NCKH_UPDATE/                 # Phiên bản nâng cấp (v2) — đa camera, background engine
+├── classification_door/         # Huấn luyện model phân loại cửa (phiên bản cũ)
+├── classification_door_new/     # Huấn luyện model phân loại cửa (phiên bản mới, 4 options)
 └── .gitignore
 ```
 
@@ -18,14 +19,14 @@ Metro_Safety_Monitor/
 
 ## Các thành phần
 
-### NCKH — Phiên bản gốc (v1)
+### 📁 NCKH — Phiên bản gốc (v1)
 
 Phiên bản đầu tiên của hệ thống, xử lý **một camera** tại một thời điểm thông qua giao diện **Streamlit**.
 
 **Tính năng chính:**
-- Phát hiện ngã dựa trên tư thế (bounding box ratio, vận tốc rơi, vị trí keypoint)
+- Phát hiện ngã dựa trên phân tích tư thế (bounding box ratio, vận tốc rơi, vị trí keypoint)
 - Phát hiện xâm nhập vùng nguy hiểm (khi cửa đóng)
-- Nhận diện trạng thái cửa đóng/mở bằng ResNet18
+- Nhận diện trạng thái cửa đóng/mở bằng ResNet18 (Dropout 0.3)
 - Làm mờ khuôn mặt khi phát hiện sự cố (bảo vệ quyền riêng tư)
 - Lưu ảnh cảnh báo vào thư mục `alerts/`
 - Âm thanh cảnh báo qua pygame
@@ -40,22 +41,23 @@ streamlit run main.py
 
 ---
 
-### NCKH_UPDATE — Phiên bản nâng cấp (v2)
+### 📁 NCKH_UPDATE — Phiên bản nâng cấp (v2)
 
-Phiên bản mở rộng với **xử lý đa camera song song**, chạy engine ngầm tách biệt khỏi UI.
+Phiên bản mở rộng với **xử lý đa camera song song**, chạy engine ngầm (background) tách biệt khỏi UI.
 
 **Tính năng bổ sung so với v1:**
-- **Background Engine** — xử lý đa camera đa luồng (mỗi camera 1 thread)
-- **Pre-fall Detection** — cảnh báo sớm trước khi ngã
-- **Dynamic Risk Score** — đánh giá rủi ro liên tục (0 → 1) cho mỗi người
-- **Adaptive Danger Zone** — micro-zone mở rộng tự động dựa theo vị trí vùng nguy hiểm
-- **Demo Viewer** — xem video real-time qua OpenCV, không cần Streamlit
-- **Metrics Manager** — theo dõi FPS, latency YOLO/ResNet, CPU/GPU
-- **SQLite Database** — lưu trữ cảnh báo và thống kê hệ thống
+- **Background Engine** — xử lý đa camera đa luồng (mỗi camera 1 thread), singleton pattern
+- **Pre-fall Detection** — cảnh báo sớm trước khi ngã (ngưỡng mềm + kiểm tra chuyển động)
+- **Dynamic Risk Score** — đánh giá rủi ro liên tục (0 → 1) cho mỗi người, dựa trên khoảng cách, hướng di chuyển, thời gian đứng gần mép, tốc độ
+- **Adaptive Danger Zone** — micro-zone (dải mép) tự động tạo bằng polygon buffer
+- **Demo Viewer** — xem video real-time qua OpenCV, lấy frame từ engine (không chạy inference lần 2)
+- **Metrics Manager** — theo dõi FPS, latency YOLO/ResNet, CPU/GPU (singleton, thread-safe)
+- **SQLite Database** — lưu trữ cảnh báo và thống kê hệ thống (WAL mode, singleton)
+- **Dashboard 3 tab** — Tổng quan, Phân tích theo giờ, Lịch sử cảnh báo
 
 **Cách chạy:**
 ```bash
-# Terminal 1: Dashboard
+# Terminal 1: Dashboard + khởi động engine
 cd Metro_Safety_Monitor/NCKH_UPDATE
 streamlit run main.py
 
@@ -67,20 +69,48 @@ python demo_viewer_from_engine.py
 
 ---
 
-### classification_door — Huấn luyện model cửa
+### 📁 classification_door — Huấn luyện model cửa (phiên bản cũ)
 
-Module huấn luyện model **ResNet18** để phân loại trạng thái cửa metro (đóng/mở).
+Module huấn luyện model **ResNet18** để phân loại trạng thái cửa metro (đóng/mở) — phiên bản ban đầu.
 
-**Nội dung:**
-- `model/datasets.py` — Xử lý dữ liệu đầu vào, tạo dataset từ ảnh crop vùng cửa
-- `model/model_option1.py` — Kịch bản huấn luyện option 1
-- `model/model_option2.py` — Kịch bản huấn luyện option 2
-- `ket_qua_option_1/` — Kết quả huấn luyện option 1 (log, biểu đồ)
-- `ket_qua_option2/` — Kết quả huấn luyện option 2 (log, biểu đồ)
-- `data/` — Dữ liệu huấn luyện
-- `requirements.txt` — Thư viện cần thiết
+| Nội dung | Mô tả |
+|----------|-------|
+| `model/datasets.py` | Custom dataset: đọc ảnh theo thư mục con, map class name → index |
+| `model/model_option1.py` | Transfer learning ResNet18, freeze backbone, train 8 epoch, batch 32, lr=3e-4, CosineAnnealing |
+| `model/model_option2.py` | Biến thể huấn luyện với cấu hình khác |
+| `ket_qua_option_1/` | Kết quả option 1 (model, biểu đồ accuracy/precision/recall/F1, TensorBoard log) |
+| `ket_qua_option2/` | Kết quả option 2 |
+| `data/` | Dữ liệu huấn luyện (thư mục train/test) |
+| `requirements.txt` | Thư viện cần thiết |
 
-**Model output:** File `best_model.pth` (ResNet18 fine-tuned) được sử dụng bởi `DoorEngine` trong NCKH và NCKH_UPDATE.
+**Model output:** File `best_model.pth` — dùng bởi `DoorEngine` trong NCKH (v1).
+
+---
+
+### 📁 classification_door_new — Huấn luyện model cửa (phiên bản mới)
+
+Phiên bản cải tiến với **4 kịch bản huấn luyện** và cơ chế **early stopping**.
+
+| Nội dung | Mô tả |
+|----------|-------|
+| `models/datasets.py` | Custom dataset (giống phiên bản cũ) |
+| `models/option_1.py` | ResNet18, freeze backbone, batch 8, lr=3e-4, 20 epoch, early stopping patience=2 |
+| `models/option_2.py` | Biến thể cấu hình #2 |
+| `models/option_3.py` | Biến thể cấu hình #3 |
+| `models/option_4.py` | Biến thể cấu hình #4 |
+| `models/__init__.py` | Package init |
+| `test.ipynb` | Notebook kiểm thử model |
+| `ket_qua_option1/` → `ket_qua_option4/` | Kết quả 4 options |
+| `data/` | Dữ liệu huấn luyện |
+
+**Cải tiến so với `classification_door`:**
+- Thêm 2 option huấn luyện mới (tổng 4 options)
+- Early stopping (patience=2) để tránh overfitting
+- Batch size nhỏ hơn (8 vs 32) cho dữ liệu nhỏ
+- Max epoch tăng (20 vs 8) kết hợp early stopping
+- Notebook test để đánh giá nhanh
+
+**Model output:** File `best_model_v1.pth` — dùng bởi `DoorEngine` trong NCKH_UPDATE (v2).
 
 ---
 
@@ -90,12 +120,12 @@ Module huấn luyện model **ResNet18** để phân loại trạng thái cửa 
 |-----------|----------|
 | Hệ điều hành | Windows 10/11 |
 | Python | 3.9+ |
-| GPU | NVIDIA GPU hỗ trợ CUDA (khuyến nghị) |
+| GPU | NVIDIA GPU hỗ trợ CUDA (khuyến nghị — hệ thống vẫn chạy trên CPU nhưng FPS thấp) |
 
 ### Cài đặt thư viện
 
 ```bash
-pip install ultralytics opencv-python torch torchvision shapely streamlit pygame psutil
+pip install ultralytics opencv-python torch torchvision shapely streamlit pygame psutil pandas
 ```
 
 > Nếu dùng GPU, cài đúng phiên bản PyTorch có CUDA tại [pytorch.org](https://pytorch.org/get-started/locally/).
@@ -106,21 +136,23 @@ pip install ultralytics opencv-python torch torchvision shapely streamlit pygame
 
 | Công nghệ | Mục đích |
 |-----------|----------|
-| **YOLO Pose (v11/v26)** | Ước lượng tư thế, phát hiện ngã/pre-fall |
-| **ByteTrack** | Theo dõi đối tượng (tracking) |
-| **ResNet18** | Phân loại trạng thái cửa đóng/mở |
-| **Shapely** | Kiểm tra điểm trong polygon (vùng nguy hiểm) |
-| **Streamlit** | Dashboard giám sát |
-| **OpenCV** | Xử lý video, hiển thị real-time |
-| **SQLite** | Lưu trữ cảnh báo và thống kê |
-| **PyTorch** | Inference model AI |
+| **YOLO Pose (v11/v26)** | Ước lượng tư thế 17 keypoints, phát hiện ngã/pre-fall |
+| **ByteTrack** | Theo dõi đối tượng liên frame (tracking) |
+| **ResNet18** | Phân loại trạng thái cửa đóng/mở (transfer learning) |
+| **Shapely** | Kiểm tra điểm trong polygon, tính khoảng cách tới boundary |
+| **Streamlit** | Dashboard giám sát (UI) |
+| **OpenCV** | Xử lý video, vẽ overlay, hiển thị real-time |
+| **SQLite (WAL mode)** | Lưu trữ cảnh báo và thống kê hệ thống |
+| **PyTorch** | Inference model AI (CUDA + half precision) |
+| **pygame** | Phát âm thanh cảnh báo |
+| **psutil** | Theo dõi CPU usage |
 
 ---
 
 ## Luồng xử lý chính
 
 ```
-Camera → Frame → YOLO Pose → Keypoints + Tracking
+Camera → Frame → YOLO Pose → Keypoints + Tracking (ByteTrack)
                                   │
                     ┌─────────────┼──────────────┐
                     ▼             ▼               ▼
@@ -128,13 +160,22 @@ Camera → Frame → YOLO Pose → Keypoints + Tracking
                (tư thế, vận   Detection      Warning
                 tốc, ratio)   (feet in zone)  (dấu hiệu sớm)
                     │             │               │
+                    ▼             ▼               ▼
+               Streak ≥ 4    Streak ≥ 3      Streak ≥ 3
+                    │             │               │
                     └─────────────┼──────────────┘
                                   ▼
-                          Alert System
-                    (ảnh, DB, âm thanh, UI)
+                       ┌──────────────────┐
+                       │   Alert System   │
+                       ├──────────────────┤
+                       │ • Lưu ảnh JPG    │
+                       │ • Ghi SQLite DB  │
+                       │ • Âm thanh alarm │
+                       │ • UI notification│
+                       └──────────────────┘
 ```
 
-Đồng thời, **ResNet18** phân loại trạng thái cửa mỗi N frame — khi cửa mở, phát hiện xâm nhập tự động tắt.
+Song song: **ResNet18** phân loại trạng thái cửa mỗi N frame → khi cửa **mở**, intrusion detection tự động tắt.
 
 ---
 
