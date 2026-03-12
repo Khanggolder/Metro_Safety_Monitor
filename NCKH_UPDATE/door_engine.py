@@ -17,7 +17,7 @@ class DoorEngine:
         self.model = models.resnet18(weights=None)
         num_feats = self.model.fc.in_features
         self.model.fc = nn.Sequential(
-            nn.Dropout(0.3),
+            nn.Dropout(0.5),
             nn.Linear(num_feats, 2)
         )
         self.model.load_state_dict(torch.load(model_path, map_location=device))

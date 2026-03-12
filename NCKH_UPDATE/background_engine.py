@@ -17,7 +17,7 @@ ALERT_ROOT = os.path.join(ROOT, "alerts")
 os.makedirs(os.path.join(ALERT_ROOT, "falls"), exist_ok=True)
 os.makedirs(os.path.join(ALERT_ROOT, "intrusions"), exist_ok=True)
 
-DOOR_SKIP = 10
+DOOR_SKIP = 35
 ALERT_COOLDOWN = 3
 STATS_LOG_INTERVAL = 30
 
@@ -118,7 +118,7 @@ class CameraWorker:
             danger_pts = np.array(self.danger_zone, np.int32).reshape((-1, 1, 2))
             door_color = (0, 255, 0) if door_state == 1 else (0, 0, 255)
             cv2.polylines(processed_frame, [door_pts], True, door_color, 2)
-            cv2.polylines(processed_frame, [danger_pts], True, (0, 0, 255), 1)
+            cv2.polylines(processed_frame, [danger_pts], True, (0, 0, 255), 2)
             text = "DOOR OPEN" if door_state == 1 else "DOOR CLOSE"
             cv2.putText(processed_frame, text,
                         (door_pts[0][0][0], door_pts[0][0][1] - 10),
@@ -176,8 +176,8 @@ class BackgroundEngine:
         self.metrics = MetricsManager()
         self.db = DBManager()
 
-        self.yolo_path = os.path.join(ROOT, "yolo11n-pose.pt")
-        self.resnet_path = os.path.join(ROOT, "best_model.pth")
+        self.yolo_path = os.path.join(ROOT, "yolo26n-pose.pt")
+        self.resnet_path = os.path.join(ROOT,"best_model_v1.pth")
 
     def start(self):
         if self._started:
