@@ -22,17 +22,69 @@ pip install ultralytics opencv-python torch torchvision shapely streamlit pygame
 
 ---
 
+## ⚠️ Cài đặt bắt buộc trước khi chạy
+
+Sau khi tải về, **bắt buộc phải sửa đường dẫn** trong 2 file sau cho đúng với vị trí thư mục trên máy của bạn:
+
+### 1. Sửa `config.py` — Đường dẫn ROOT
+
+Mở file `config.py`, sửa dòng 2 — thay đường dẫn **tuyệt đối** trỏ tới thư mục `NCKH_UPDATE` trên máy bạn:
+
+```python
+# ❌ Đường dẫn cũ (sẽ lỗi trên máy khác):
+ROOT = r"C:\Users\ad\Downloads\codepython\project\NCKH"
+
+# ✅ Sửa thành đường dẫn tới thư mục NCKH_UPDATE trên máy bạn:
+ROOT = r"<ĐƯỜNG_DẪN_TỚI_THƯ_MỤC_NCKH_UPDATE>"
+```
+
+**Ví dụ:**
+```python
+ROOT = r"D:\MyProject\Metro_Safety_Monitor\NCKH_UPDATE"
+```
+
+> **Quan trọng:** `ROOT` được dùng để xác định đường dẫn video (`data/`), model AI (`yolo26n-pose.pt`, `best_model_v1.pth`), thư mục cảnh báo (`alerts/`), và file âm thanh (`alarm.mp3`). Nếu sai, hệ thống sẽ không tìm được file và báo lỗi.
+
+### 2. Sửa `db_manager.py` — Đường dẫn Database
+
+Mở file `db_manager.py`, sửa dòng 7–9 — thay đường dẫn SQLite database:
+
+```python
+# ❌ Đường dẫn cũ (sẽ lỗi trên máy khác):
+DB_PATH = os.path.join(
+    r"D:\Metro_Safety_Monitor\NCKH_UPDATE", "metro_ai.db"
+)
+
+# ✅ Sửa thành (tự động lấy từ thư mục hiện tại):
+DB_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "metro_ai.db"
+)
+```
+
+> **Gợi ý:** Cách dùng `os.path.dirname(os.path.abspath(__file__))` sẽ tự động trỏ tới thư mục chứa file `db_manager.py`, không cần sửa lại khi chuyển máy.
+
+### Tóm tắt các file cần sửa
+
+| File | Dòng | Biến | Sửa thành |
+|------|------|------|-----------|
+| `config.py` | 2 | `ROOT` | Đường dẫn tuyệt đối tới thư mục `NCKH_UPDATE` |
+| `db_manager.py` | 7–9 | `DB_PATH` | Dùng `os.path.dirname(os.path.abspath(__file__))` hoặc đường dẫn tuyệt đối |
+
+> **Lưu ý:** Tất cả các module khác (`background_engine.py`, `demo_viewer_from_engine.py`, `main.py`...) đều lấy đường dẫn từ `ROOT` trong `config.py`, nên chỉ cần sửa 2 file trên là đủ.
+
+---
+
 ## Cấu trúc thư mục
 
 ```
 NCKH_UPDATE/
-├── config.py                    # Cấu hình 3 camera, polygon vùng cửa + vùng nguy hiểm
+├── config.py                    # ⚠️ CẦN SỬA ROOT — cấu hình camera, polygon
 ├── camera_manager.py            # Wrapper cv2.VideoCapture với property polygon
 ├── door_engine.py               # Nhận diện trạng thái cửa (ResNet18, Dropout 0.5)
 ├── pose_engine.py               # Phát hiện ngã/pre-fall/xâm nhập + risk scoring (386 dòng)
 ├── background_engine.py         # Engine đa camera chạy ngầm, mỗi camera 1 thread (216 dòng)
 ├── metrics_manager.py           # Singleton quản lý metrics thread-safe (130 dòng)
-├── db_manager.py                # Singleton SQLite WAL với 2 bảng: alerts + system_stats (133 dòng)
+├── db_manager.py                # ⚠️ CẦN SỬA DB_PATH — SQLite WAL, 2 bảng (133 dòng)
 ├── main.py                      # Dashboard Streamlit 3 tab: Tổng quan, Phân tích, Lịch sử (146 dòng)
 ├── demo_viewer_from_engine.py   # Viewer OpenCV real-time + âm thanh cảnh báo 2 mức (147 dòng)
 │
@@ -62,6 +114,9 @@ NCKH_UPDATE/
 Mở file `config.py` để chỉnh sửa danh sách camera và các vùng polygon:
 
 ```python
+#config.py
+ROOT = r"<ĐƯỜNG_DẪN_TỚI_THƯ_MỤC_NCKH_UPDATE>"  # ← SỬA DÒNG NÀY
+
 CAMERAS = {
     "Cam 1": {
         "video": ROOT + r"\data\te_2.mp4",
