@@ -1,3 +1,4 @@
+<img width="2560" height="1783" alt="z7812219730552_b7a39694fb8b4de0f583e46075d0f03d" src="https://github.com/user-attachments/assets/69c856c0-814d-489b-928c-5ecd157b3e2d" />
 # Metro Safety Monitor
 Hệ thống giám sát an toàn ga metro bằng AI — sử dụng camera kết hợp **YOLO Pose Estimation** và **ResNet18** để phát hiện các tình huống nguy hiểm trên sân ga theo thời gian thực: **ngã (fall)**, **xâm nhập vùng nguy hiểm (intrusion)**, và **cảnh báo sớm trước khi ngã (pre-fall)**.
 
@@ -185,3 +186,5 @@ Song song: **ResNet18** phân loại trạng thái cửa mỗi N frame → khi c
 ## Giấy phép
 
 Dự án nghiên cứu khoa học (NCKH).
+<img width="2560" height="1783" alt="z7812219730552_b7a39694fb8b4de0f583e46075d0f03d" src="https://github.com/user-attachments/assets/3b499c16-d5ad-4943-81a5-86afa493aa55" />
+
